@@ -1,44 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import DynamicTable from '../components/dynamicTable';
-import DetailPopup from '../components/popupInfo';
-import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
+import DynamicTable from '../components/dynamicTable';
+import { Column } from 'react-table';
 
-const SalesPage = () => {
-  const [salesData, setSalesData] = useState<any[]>([]);
-  const [selectedSale, setSelectedSale] = useState<any>(null);
+interface Artist {
+  name: string;
+  email: string;
+  category: string;
+  salesCount: number;
+  revenue: number;
+}
+
+const ArtistPage: React.FC = () => {
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
-    const fetchSalesData = async () => {
-      const salesCollection = collection(db, 'sales');
-      const salesSnapshot = await getDocs(salesCollection);
-      const salesList = salesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSalesData(salesList);
-      console.log(salesList)
+    const fetchArtists = async () => {
+      const artistCollection = collection(db, 'Artists');
+      const snapshot = await getDocs(artistCollection);
+      const artistsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as Artist }));
+      setArtists(artistsData);
     };
 
-    fetchSalesData();
-    console.log(salesData);
+    fetchArtists();
   }, []);
 
-  // Define the columns based on your data's keys
-  const columns = [
-    { key: 'article', label: 'Nom' },
-    { key: 'client_email', label: 'Courriel' },
-    { key: 'category', label: 'Catégorie' },
-    { key: 'sales_count', label: 'Nombre ventes' },
-    { key: 'revenue', label: 'Revenu généré' }
-  ];
+  const columns: Column<Artist>[] = React.useMemo(() => [
+    {
+      Header: 'Name',
+      accessor: 'name'
+    },
+    {
+      Header: 'Email',
+      accessor: 'email'
+    },
+    {
+      Header: 'Category',
+      accessor: 'category'
+    },
+    {
+      Header: 'Sales Count',
+      accessor: 'salesCount'
+    },
+    {
+      Header: 'Revenue',
+      accessor: 'revenue'
+    },
+  ], []);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Sales Data</h1>
-      
-      <DynamicTable data={salesData} columns={columns} onRowClick={setSelectedSale} />
-      
-      {selectedSale && <DetailPopup item={selectedSale} onClose={() => setSelectedSale(null)} />}
+    <div className="container mx-auto px-4 py-6">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="p-2 border border-gray-300 rounded"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button className="p-2 border border-gray-300 rounded text-white bg-blue-500 hover:bg-blue-600">
+            Search
+          </button>
+        </div>
+        <button className="p-2 border border-gray-300 rounded text-white bg-green-500 hover:bg-green-600">
+          Add an Artist
+        </button>
+      </div>
+      <DynamicTable columns={columns} data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()))} />
     </div>
   );
 };
 
-export default SalesPage;
+export default ArtistPage;
