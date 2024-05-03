@@ -45,11 +45,11 @@ const ArtistPage: React.FC = () => {
                 accessor: "category",
             },
             {
-                Header: "Sales Count",
+                Header: "Nombre vente",
                 accessor: "salesCount",
             },
             {
-                Header: "Revenue",
+                Header: "Revenu généré",
                 accessor: "revenue",
             },
         ],

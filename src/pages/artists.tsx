@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { db } from '../config/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
 import DynamicTable from '../components/dynamicTable';
 import { Column } from 'react-table';
 
@@ -8,24 +6,35 @@ interface Artist {
   name: string;
   email: string;
   category: string;
-  salesCount: number;
-  revenue: number;
+  item_sold: number;
+  total_revenue: number;
 }
 
 const ArtistPage: React.FC = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  
   useEffect(() => {
-    const fetchArtists = async () => {
-      const artistCollection = collection(db, 'Artists');
-      const snapshot = await getDocs(artistCollection);
-      const artistsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as Artist }));
-      setArtists(artistsData);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Artists.json');
+        const data = await response.json();
+        
+        const loadedArtists = Object.values(data).map((item: any) => ({
+          name: item.nom,
+          email: item.email,
+          category: item.categorie,
+          item_sold: item.totalVente,
+          total_revenue: item.montantDu,
+        }));
+        setArtists(loadedArtists);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des artistes:', error);
+      }
     };
 
-    fetchArtists();
-    console.log(artists);
+    fetchData();
   }, []);
 
   const columns: Column<Artist>[] = React.useMemo(() => [
@@ -42,12 +51,12 @@ const ArtistPage: React.FC = () => {
       accessor: 'category'
     },
     {
-      Header: 'Sales Count',
-      accessor: 'salesCount'
+      Header: 'Total vente',
+      accessor: 'item_sold'
     },
     {
-      Header: 'Revenue',
-      accessor: 'revenue'
+      Header: 'Revenu Généré',
+      accessor: 'total_revenue'
     },
   ], []);
 
@@ -62,11 +71,11 @@ const ArtistPage: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button className="p-2 border border-gray-300 rounded text-white bg-blue-500 hover:bg-blue-600">
+          <button className="p-2 border border-gray-300 rounded text-black bg-blue-500 hover:bg-blue-600">
             Search
           </button>
         </div>
-        <button className="p-2 border border-gray-300 rounded text-white bg-green-500 hover:bg-green-600">
+        <button className="p-2 border border-gray-300 rounded text-black bg-green-500 hover:bg-green-600">
           Add an Artist
         </button>
       </div>

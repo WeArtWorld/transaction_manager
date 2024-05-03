@@ -51,11 +51,11 @@ const DynamicTable = <T extends object>({ columns, data }: TableProps<T>) => {
             prepareRow(row);
             const { key, ...rowProps } = row.getRowProps();
             return (
-              <tr key={key} {...rowProps} onClick={() => handleRowClick(row)} className="cursor-pointer hover:bg-gray-100">
+              <tr key={key} {...rowProps} onClick={() => handleRowClick(row)} className=" cursor-pointer hover:bg-gray-100">
                 {row.cells.map(cell => {
                   const { key, ...cellProps } = cell.getCellProps();
                   return (
-                    <td key={key} {...cellProps} className="px-6 py-4 whitespace-nowrap">
+                    <td key={key} {...cellProps} className="px-6 py-4 whitespace-nowrap text-black">
                       {cell.render('Cell')}
                     </td>
                   );
