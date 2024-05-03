@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DynamicTable from '../components/dynamicTable';
+import AddArtistPopup from '../components/addArtistPopUp';
 import { Column } from 'react-table';
 
 interface Artist {
@@ -13,14 +14,13 @@ interface Artist {
 const ArtistPage: React.FC = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [isPopupOpen, setPopupOpen] = useState(false);
 
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Artists.json');
         const data = await response.json();
-        
         const loadedArtists = Object.values(data).map((item: any) => ({
           name: item.nom,
           email: item.email,
@@ -36,6 +36,14 @@ const ArtistPage: React.FC = () => {
 
     fetchData();
   }, []);
+
+  const handleAddArtistClick = () => {
+    setPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setPopupOpen(false);
+  };
 
   const columns: Column<Artist>[] = React.useMemo(() => [
     {
@@ -75,11 +83,12 @@ const ArtistPage: React.FC = () => {
             Search
           </button>
         </div>
-        <button className="p-2 border border-gray-300 rounded text-black bg-green-500 hover:bg-green-600">
+        <button onClick={handleAddArtistClick} className="p-2 border border-gray-300 rounded text-black bg-green-500 hover:bg-green-600">
           Add an Artist
         </button>
       </div>
       <DynamicTable columns={columns} data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()))} />
+      <AddArtistPopup isOpen={isPopupOpen} onClose={handleClosePopup} />
     </div>
   );
 };

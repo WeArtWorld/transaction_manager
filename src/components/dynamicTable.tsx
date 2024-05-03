@@ -76,7 +76,7 @@ const DynamicTable = <T extends object>({ columns, data }: TableProps<T>) => {
         <div className="flex flex-col space-y-4">
           <h2 className="text-lg font-bold">Details</h2>
           <div className="break-words">{JSON.stringify(rowData, null, 2)}</div>
-          <button onClick={() => setModalIsOpen(false)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+          <button onClick={() => setModalIsOpen(false)} className="mt-4 px-4 py-2 bg-blue-500 text-black rounded hover:bg-blue-700">
             Close
           </button>
         </div>
