@@ -1,15 +1,14 @@
-import { AppProps } from 'next/app';
-import Head from 'next/head';
-import '../styles/globals.css'; 
+import { AppProps } from "next/app";
+import "../styles/globals.css";
+import Header from "../components/header";
+
 function MyApp({ Component, pageProps }: AppProps) {
-  return( 
-  <>
-  <Head>
-  <link rel="icon" href="/favicon.ico" />
-  </Head>
-  <Component {...pageProps} />
-  </>
-  );
+    return (
+        <>
+            <Header />
+            <Component {...pageProps} />
+        </>
+    );
 }
 
 export default MyApp;
