@@ -74,8 +74,8 @@ const ArtistPage: React.FC = () => {
         <div className="flex space-x-2">
           <input
             type="text"
-            placeholder="Search..."
-            className="p-2 border border-gray-300 rounded"
+            placeholder="Search by name..."
+            className="text-black p-2 border border-gray-300 rounded"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

@@ -51,7 +51,7 @@ const AddArtistPopup: React.FC<AddArtistPopupProps> = ({ isOpen, onClose }) => {
     <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-10 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen">
         <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow">
-          <Dialog.Title className="text-lg font-bold">Ajouter un artiste</Dialog.Title>
+          <Dialog.Title className="text-black text-lg font-bold">Ajouter un artiste</Dialog.Title>
           <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
             <div className="space-y-4">
               <label className="block">
