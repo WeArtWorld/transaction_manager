@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTable, Column, Row } from 'react-table';
 import Modal from 'react-modal';
 
@@ -7,9 +7,10 @@ Modal.setAppElement('#__next');
 interface TableProps<T extends object> {
   columns: Column<T>[];
   data: T[];
+  onSave: (data: T) => void; 
 }
 
-const DynamicTable = <T extends object>({ columns, data }: TableProps<T>) => {
+const DynamicTable = <T extends object>({ columns, data, onSave}: TableProps<T>) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -18,12 +19,25 @@ const DynamicTable = <T extends object>({ columns, data }: TableProps<T>) => {
     prepareRow,
   } = useTable<T>({ columns, data });
 
-  const [modalIsOpen, setModalIsOpen] = React.useState(false);
-  const [rowData, setRowData] = React.useState<T | null>(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [editableRow, setEditableRow] = useState<T | null>(null);
 
   const handleRowClick = (row: Row<T>) => {
-    setRowData(row.original);
+    setEditableRow({ ...row.original });
     setModalIsOpen(true);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof T) => {
+    if (editableRow) {
+      setEditableRow({ ...editableRow, [field]: e.target.value });
+    }
+  };
+
+  const handleSave = () => {
+    if (editableRow) {
+      onSave(editableRow);
+      setModalIsOpen(false);
+    }
   };
 
   return (
@@ -74,10 +88,20 @@ const DynamicTable = <T extends object>({ columns, data }: TableProps<T>) => {
         overlayClassName="Overlay"
       >
         <div className="flex flex-col space-y-4">
-          <h2 className="text-lg font-bold">Details</h2>
-          <div className="break-words">{JSON.stringify(rowData, null, 2)}</div>
-          <button onClick={() => setModalIsOpen(false)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-            Close
+          <h2 className="text-lg font-bold">Edit Details</h2>
+          {editableRow && Object.keys(editableRow).map((key) => (
+            <input
+            key={key}
+            type="text"
+            value={(editableRow as any)[key]}
+            onChange={(e) => handleChange(e, key as keyof T)}
+            className="text-black p-2 border border-gray-300 rounded"
+            readOnly={key === 'key'} 
+            style={key === 'key' ? { backgroundColor: '#647689', color: '#495057' } : {}}
+          />
+          ))}
+          <button onClick={handleSave} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+            Save Changes
           </button>
         </div>
       </Modal>
