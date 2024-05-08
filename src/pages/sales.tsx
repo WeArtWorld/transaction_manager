@@ -4,7 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import DynamicTable from "../components/dynamicTable";
 import { Column } from "react-table";
 
-interface Artist {
+interface Sale {
     name: string;
     email: string;
     category: string;
@@ -12,25 +12,25 @@ interface Artist {
     revenue: number;
 }
 
-const ArtistPage: React.FC = () => {
-    const [artists, setArtists] = useState<Artist[]>([]);
+const SalePage: React.FC = () => {
+    const [Sales, setSales] = useState<Sale[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
     useEffect(() => {
-        const fetchArtists = async () => {
-            const artistCollection = collection(db, "Artists");
-            const snapshot = await getDocs(artistCollection);
-            const artistsData = snapshot.docs.map((doc) => ({
+        const fetchSales = async () => {
+            const SaleCollection = collection(db, "Sales");
+            const snapshot = await getDocs(SaleCollection);
+            const SalesData = snapshot.docs.map((doc) => ({
                 id: doc.id,
-                ...(doc.data() as Artist),
+                ...(doc.data() as Sale),
             }));
-            setArtists(artistsData);
+            setSales(SalesData);
         };
 
-        fetchArtists();
+        fetchSales();
     }, []);
 
-    const columns: Column<Artist>[] = React.useMemo(
+    const columns: Column<Sale>[] = React.useMemo(
         () => [
             {
                 Header: "Name",
@@ -72,17 +72,17 @@ const ArtistPage: React.FC = () => {
                     </button>
                 </div>
                 <button className="p-2 border border-gray-300 rounded text-white bg-green-500 hover:bg-green-600">
-                    Add an Artist
+                    Add an Sale
                 </button>
             </div>
             <DynamicTable
                 columns={columns}
-                data={artists.filter((artist) =>
-                    artist.name.toLowerCase().includes(searchTerm.toLowerCase())
+                data={Sales.filter((Sale) =>
+                    Sale.name.toLowerCase().includes(searchTerm.toLowerCase())
                 )}
             />
         </div>
     );
 };
 
-export default ArtistPage;
+export default SalePage;
