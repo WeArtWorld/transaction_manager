@@ -4,6 +4,7 @@ import AddArtistPopup from '../components/addArtistPopUp';
 import { Column } from 'react-table';
 
 interface Artist {
+  key: string;
   name: string;
   email: string;
   category: string;
@@ -15,16 +16,20 @@ const ArtistPage: React.FC = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Artists.json');
         const data = await response.json();
-        const loadedArtists = Object.values(data).map((item: any) => ({
-          name: item.nom,
+        const loadedArtists = Object.entries(data).map(([key, item]: [string, any]) => ({
+          key: key,
+          name: item.name,
           email: item.email,
-          category: item.categorie,
+          category: item.category,
           item_sold: item.totalVente,
           total_revenue: item.montantDu,
         }));
@@ -36,6 +41,31 @@ const ArtistPage: React.FC = () => {
 
     fetchData();
   }, []);
+
+  const handleEdit = (artistKey: string) => {
+    const artist = artists.find(a => a.key === artistKey);
+    if (artist) {
+      setSelectedArtist(artist);
+      setModalIsOpen(true);
+    }
+  };
+
+    const handleUpdateArtist = async (updatedArtist: Artist) => {
+      const { key, ...updateData } = updatedArtist;
+    try {
+      await fetch(`https://transactions-man-default-rtdb.firebaseio.com/Artists/${updatedArtist.key}.json`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+      setArtists(artists.map(a => a.key === key ? {...a, ...updateData} : a));
+      setModalIsOpen(false);
+    } catch (error) {
+      console.error('Failed to update artist', error);
+    }
+  };
 
   const handleAddArtistClick = () => {
     setPopupOpen(true);
@@ -87,7 +117,11 @@ const ArtistPage: React.FC = () => {
           Add an Artist
         </button>
       </div>
-      <DynamicTable columns={columns} data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()))} />
+      <DynamicTable
+        columns={columns}
+        data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()))}
+        onSave={handleUpdateArtist} 
+      />
       <AddArtistPopup isOpen={isPopupOpen} onClose={handleClosePopup} />
     </div>
   );

@@ -91,12 +91,14 @@ const DynamicTable = <T extends object>({ columns, data, onSave}: TableProps<T>)
           <h2 className="text-lg font-bold">Edit Details</h2>
           {editableRow && Object.keys(editableRow).map((key) => (
             <input
-              key={key}
-              type="text"
-              value={(editableRow as any)[key]}
-              onChange={(e) => handleChange(e, key as keyof T)}
-              className="text-black p-2 border border-gray-300 rounded"
-            />
+            key={key}
+            type="text"
+            value={(editableRow as any)[key]}
+            onChange={(e) => handleChange(e, key as keyof T)}
+            className="text-black p-2 border border-gray-300 rounded"
+            readOnly={key === 'key'} 
+            style={key === 'key' ? { backgroundColor: '#647689', color: '#495057' } : {}}
+          />
           ))}
           <button onClick={handleSave} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
             Save Changes
