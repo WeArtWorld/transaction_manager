@@ -1,75 +1,74 @@
 import React, { useEffect, useState } from "react";
 import DynamicTable from "../components/dynamicTable";
-import AddArtistPopup from '../components/addArtistPopUp';
+import AddVolunteerPopup from '../components/addVolunteersPopUp';
 import { Column } from "react-table";
 import Modal from "react-modal";
 
 Modal.setAppElement("#__next");
 
-interface Artist {
+interface Volunteer {
   key: string;
   name: string;
   email: string;
-  category: string;
   item_sold: number;
+  owed_amount: number;
   total_revenue: number;
-  // !!!!!! ajouter owed_amount: string; dans la bd et dans l'affichage !!!!!!!!!!!!
 }
 
-const ArtistPage: React.FC = () => {
-  const [artists, setArtists] = useState<Artist[]>([]);
+const VolunteerPage: React.FC = () => {
+  const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isPopupOpen, setPopupOpen] = useState(false);
-  const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
+  const [selectedVolunteer, setSelectedVolunteer] = useState<Volunteer | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Artists.json');
+        const response = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Volunteers.json');
         const data = await response.json();
-        const loadedArtists = Object.entries(data).map(([key, item]: [string, any]) => ({
+        const loadedVolunteers = Object.entries(data).map(([key, item]: [string, any]) => ({
           key: key,
           name: item.name,
           email: item.email,
-          category: item.category,
-          item_sold: item.totalVente,
-          total_revenue: item.montantDu, // !!!!!! ajouter owed_amount: string; dans la bd et dans l'affichage !!!!!!!!!!!!
+          item_sold: item.item_sold,
+          owed_amount: item.owed_amount,
+          total_revenue: item.total_revenue,
         }));
-        setArtists(loadedArtists);
+        setVolunteers(loadedVolunteers);
       } catch (error) {
-        console.error('Erreur lors de la récupération des artistes:', error);
+        console.error('Error retrieving volunteers:', error);
       }
     };
     fetchData();
   }, []);
 
-  const handleEdit = (artistKey: string) => {
-    const artist = artists.find(a => a.key === artistKey);
-    if (artist) {
-      setSelectedArtist(artist);
+  const handleEdit = (volunteerKey: string) => {
+    const volunteer = volunteers.find(a => a.key === volunteerKey);
+    if (volunteer) {
+      setSelectedVolunteer(volunteer);
       setModalIsOpen(true);
     }
   };
 
-  const handleUpdateArtist = async (updatedArtist: Artist) => {
-    const { key, ...updateData } = updatedArtist;
+  const handleUpdateVolunteer = async (updatedVolunteer: Volunteer) => {
+    const { key, ...updateData } = updatedVolunteer;
     try {
-      await fetch(`https://transactions-man-default-rtdb.firebaseio.com/Artists/${updatedArtist.key}.json`, {
+      await fetch(`https://transactions-man-default-rtdb.firebaseio.com/Volunteers/${updatedVolunteer.key}.json`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateData),
       });
-      setArtists(artists.map(a => a.key === key ? { ...a, ...updateData } : a));
+      setVolunteers(volunteers.map(a => a.key === key ? { ...a, ...updateData } : a));
       setModalIsOpen(false);
     } catch (error) {
-      console.error('Failed to update artist', error);
+      console.error('Failed to update volunteer', error);
     }
   };
 
-  const handleAddArtistClick = () => {
+  const handleAddVolunteerClick = () => {
     setPopupOpen(true);
   };
 
@@ -78,26 +77,26 @@ const ArtistPage: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (selectedArtist) {
+    if (selectedVolunteer) {
       try {
         await fetch(
-          `https://transactions-man-default-rtdb.firebaseio.com/Artists/${selectedArtist.key}.json`,
+          `https://transactions-man-default-rtdb.firebaseio.com/Volunteers/${selectedVolunteer.key}.json`,
           {
             method: "DELETE",
           }
         );
-        setArtists(
-          artists.filter((artist) => artist.key !== selectedArtist.key)
+        setVolunteers(
+          volunteers.filter((volunteer) => volunteer.key !== selectedVolunteer.key)
         );
         setModalIsOpen(false);
-        setSelectedArtist(null);
+        setSelectedVolunteer(null);
       } catch (error) {
-        console.error("Error deleting artist:", error);
+        console.error("Error deleting volunteer:", error);
       }
     }
   };
 
-  const columns: Column<Artist>[] = React.useMemo(() => [
+  const columns: Column<Volunteer>[] = React.useMemo(() => [
     {
       Header: "Name",
       accessor: "name",
@@ -107,25 +106,23 @@ const ArtistPage: React.FC = () => {
       accessor: "email",
     },
     {
-      Header: "Category",
-      accessor: "category",
-    },
-    {
-      Header: "Total vente",
+      Header: "Items Sold",
       accessor: "item_sold",
     },
     {
-      Header: "Revenu Généré",
+      Header: "Amount Owed",
+      accessor: "owed_amount",
+    },
+    {
+      Header: "Total Revenue",
       accessor: "total_revenue",
     },
     {
       Header: "Actions",
       Cell: ({ row }: any) => (
-        
-
         <button
           onClick={() => {
-            setSelectedArtist(row.original);
+            setSelectedVolunteer(row.original);
             setModalIsOpen(true);
           }}
         >
@@ -151,28 +148,28 @@ const ArtistPage: React.FC = () => {
             Search
           </button>
         </div>
-        <button onClick={handleAddArtistClick} className="p-2 border border-gray-300 rounded text-black bg-green-500 hover:bg-green-600">
-          Add an Artist
+        <button onClick={handleAddVolunteerClick} className="p-2 border border-gray-300 rounded text-black bg-green-500 hover:bg-green-600">
+          Add a Volunteer
         </button>
       </div>
       <DynamicTable
         columns={columns}
-        data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()))}
-        onSave={handleUpdateArtist}
+        data={volunteers.filter(volunteer => volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()))}
+        onSave={handleUpdateVolunteer}
       />
-      <AddArtistPopup isOpen={isPopupOpen} onClose={handleClosePopup} />
+      <AddVolunteerPopup isOpen={isPopupOpen} onClose={handleClosePopup} />
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
-        contentLabel="Delete Confirmation"
+        contentLabel="Volunteer Delete Confirmation"
         className="Modal"
         overlayClassName="Overlay"
       >
         <div className="flex flex-col space-y-4">
           <h2 className="text-lg font-bold">Confirm Delete</h2>
-          {selectedArtist && (
+          {selectedVolunteer && (
             <p>
-              Are you sure you want to delete {selectedArtist.name}?
+              Are you sure you want to delete {selectedVolunteer.name}?
             </p>
           )}
           <div>
@@ -195,4 +192,4 @@ const ArtistPage: React.FC = () => {
   );
 };
 
-export default ArtistPage;
+export default VolunteerPage;
