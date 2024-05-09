@@ -120,13 +120,16 @@ const ArtistPage: React.FC = () => {
     {
       Header: "Actions",
       Cell: ({ row }: any) => (
+        
+
         <button
           onClick={() => {
             setSelectedArtist(row.original);
             setModalIsOpen(true);
           }}
         >
-          Delete
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+          <i className="fas fa-edit" style={{ color: 'blue', cursor: 'pointer' }}></i>
         </button>
       ),
     },

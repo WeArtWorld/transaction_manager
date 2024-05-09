@@ -75,12 +75,7 @@ const SalePage: React.FC = () => {
                     Add an Sale
                 </button>
             </div>
-            <DynamicTable
-                columns={columns}
-                data={Sales.filter((Sale) =>
-                    Sale.name.toLowerCase().includes(searchTerm.toLowerCase())
-                )}
-            />
+            
         </div>
     );
 };
