@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@headlessui/react": "^1.7.19",
     "firebase": "^10.11.1",
     "firebase-admin": "^12.1.0",
