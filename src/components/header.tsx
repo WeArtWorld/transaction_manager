@@ -7,17 +7,17 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "Transaction", path: "/transaction" },
-    { name: "Artist", path: "/artist" },
-    { name: "Volunteer", path: "/volunteer" },
+    { name: "Transaction", path: "/sales" },
+    { name: "Artist", path: "/artists" },
+    { name: "Volunteer", path: "/volunteers" },
 ];
 
 const Header: React.FC = () => {
     return (
         <header className="bg-gray-900 text-white py-4 px-6 flex justify-between items-center">
             <div className="text-xl">
-                <Link href="/">
-                    <span className="cursor-pointer">Logo</span>
+                <Link href="/artists">
+                    <img className="max-h-12" src="../logo.png"></img>
                 </Link>
             </div>
             <nav>

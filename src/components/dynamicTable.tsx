@@ -21,7 +21,7 @@ const DynamicTable = <T extends object>({
 
     const handleRowClick = (row: Row<T>) => {
         setEditableRow({ ...row.original });
-        setIsOpen(true);
+        //setIsOpen(true);
     };
 
     const handleChange = (
@@ -102,57 +102,7 @@ const DynamicTable = <T extends object>({
                 </tbody>
             </table>
 
-            <Dialog
-                open={isOpen}
-                onClose={() => setIsOpen(false)}
-                className="fixed inset-0 z-10 overflow-y-auto"
-            >
-                <div className="flex items-center justify-center min-h-screen">
-                    <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow">
-                        <Dialog.Title className="text-black text-lg font-bold">
-                            Edit Details
-                        </Dialog.Title>
-                        <div className="flex flex-col space-y-4">
-                            {editableRow &&
-                                Object.keys(editableRow).map((key) => (
-                                    <input
-                                        key={key}
-                                        type="text"
-                                        value={(editableRow as any)[key]}
-                                        onChange={(e) =>
-                                            handleChange(e, key as keyof T)
-                                        }
-                                        className="text-black p-2 border border-gray-300 rounded"
-                                        readOnly={key === "key"}
-                                        style={
-                                            key === "key"
-                                                ? {
-                                                      backgroundColor:
-                                                          "#647689",
-                                                      color: "#495057",
-                                                  }
-                                                : {}
-                                        }
-                                    />
-                                ))}
-                            <div className="flex justify-end">
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="mr-2 px-4 py-2 text-gray-700 border rounded"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleSave}
-                                    className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
-                                >
-                                    Save Changes
-                                </button>
-                            </div>
-                        </div>
-                    </Dialog.Panel>
-                </div>
-            </Dialog>
+            
         </>
     );
 };
