@@ -3,6 +3,7 @@ import DynamicTable from "../components/dynamicTable";
 import AddSalePopup from '../components/addSalePopup';
 import { Column } from "react-table";
 import Modal from "react-modal";
+import { Dialog } from "@headlessui/react";
 
 Modal.setAppElement("#__next");
 
@@ -21,9 +22,10 @@ interface Sale {
 const SalesPage: React.FC = () => {
   const [sales, setSales] = useState<Sale[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [isPopupOpen, setPopupOpen] = useState(false);
+  const [isAddSalePopupOpen, setAddSalePopupOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,12 +51,14 @@ const SalesPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleEdit = (saleKey: string) => {
-    const sale = sales.find(a => a.key === saleKey);
-    if (sale) {
-      setSelectedSale(sale);
-      setModalIsOpen(true);
-    }
+  const handleEditClick = (sale: Sale) => {
+    setSelectedSale(sale);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteClick = (sale: Sale) => {
+    setSelectedSale(sale);
+    setDeleteModalOpen(true);
   };
 
   const handleUpdateSale = async (updatedSale: Sale) => {
@@ -68,18 +72,14 @@ const SalesPage: React.FC = () => {
         body: JSON.stringify(updateData),
       });
       setSales(sales.map(a => a.key === key ? { ...a, ...updateData } : a));
-      setModalIsOpen(false);
+      setEditModalOpen(false);
     } catch (error) {
       console.error('Failed to update sale', error);
     }
   };
 
   const handleAddSaleClick = () => {
-    setPopupOpen(true);
-  };
-
-  const handleClosePopup = () => {
-    setPopupOpen(false);
+    setAddSalePopupOpen(true);
   };
 
   const handleDelete = async () => {
@@ -94,7 +94,7 @@ const SalesPage: React.FC = () => {
         setSales(
           sales.filter((sale) => sale.key !== selectedSale.key)
         );
-        setModalIsOpen(false);
+        setDeleteModalOpen(false);
         setSelectedSale(null);
       } catch (error) {
         console.error("Error deleting sale:", error);
@@ -134,15 +134,15 @@ const SalesPage: React.FC = () => {
     {
       Header: "Actions",
       Cell: ({ row }: any) => (
-        <button
-          onClick={() => {
-            setSelectedSale(row.original);
-            setModalIsOpen(true);
-          }}
-        >
+        <>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-          <i className="fas fa-edit" style={{ color: 'blue', cursor: 'pointer' }}></i>
-        </button>
+          <button onClick={() => handleEditClick(row.original)}>
+            <i className="fas fa-edit" style={{ color: 'blue', cursor: 'pointer' }}></i>
+          </button>
+          <button onClick={() => handleDeleteClick(row.original)}>
+            <i className="fas fa-trash" style={{ color: 'red', cursor: 'pointer' }}></i>
+          </button>
+        </>
       ),
     },
   ], []);
@@ -171,10 +171,10 @@ const SalesPage: React.FC = () => {
         data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_name.toLowerCase().includes(searchTerm.toLowerCase()))}
         onSave={handleUpdateSale}
       />
-      <AddSalePopup isOpen={isPopupOpen} onClose={handleClosePopup} />
+      <AddSalePopup isOpen={isAddSalePopupOpen} onClose={() => setAddSalePopupOpen(false)} />
       <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
+        isOpen={isDeleteModalOpen}
+        onRequestClose={() => setDeleteModalOpen(false)}
         contentLabel="Delete Confirmation"
         className="Modal"
         overlayClassName="Overlay"
@@ -194,7 +194,7 @@ const SalesPage: React.FC = () => {
               Delete
             </button>
             <button
-              onClick={() => setModalIsOpen(false)}
+              onClick={() => setDeleteModalOpen(false)}
               className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 ml-2"
             >
               Cancel
@@ -202,6 +202,47 @@ const SalesPage: React.FC = () => {
           </div>
         </div>
       </Modal>
+      <Dialog
+        open={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        className="fixed inset-0 z-10 overflow-y-auto"
+      >
+        <div className="flex items-center justify-center min-h-screen">
+          <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow">
+            <Dialog.Title className="text-lg font-bold">Edit Details</Dialog.Title>
+            <form className="flex flex-col space-y-4">
+              {selectedSale && Object.keys(selectedSale).map((key) => (
+                <div key={key}>
+                  <label className="block text-sm font-medium text-gray-700">
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </label>
+                  <input
+                    type="text"
+                    value={(selectedSale as any)[key]}
+                    onChange={(e) => {
+                      const updated = { ...selectedSale, [key]: e.target.value };
+                      setSelectedSale(updated);
+                    }}
+                    className="mt-1 block w-full p-2 border text-black border-gray-300 rounded shadow-sm sm:text-sm"
+                    readOnly={key === "key"}
+                    style={key === "key" ? { backgroundColor: "#647689", color: "#495057" } : {}}
+                  />
+                </div>
+              ))}
+              <div className="flex justify-end mt-4">
+                <button onClick={() => setEditModalOpen(false)} className="mr-2 px-4 py-2 text-gray-700 border rounded">
+                  Cancel
+                </button>
+                <button onClick={() => {
+                  handleUpdateSale(selectedSale!); // Ensure not null when calling update
+                }} className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </div>
   );
 };
