@@ -137,7 +137,7 @@ const SalesPage: React.FC = () => {
         <>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
           <button onClick={() => handleEditClick(row.original)}>
-            <i className="fas fa-edit" style={{ color: 'blue', cursor: 'pointer' }}></i>
+            <i className="fas fa-edit pr-5" style={{ color: 'blue', cursor: 'pointer' }}></i>
           </button>
           <button onClick={() => handleDeleteClick(row.original)}>
             <i className="fas fa-trash" style={{ color: 'red', cursor: 'pointer' }}></i>
@@ -234,7 +234,7 @@ const SalesPage: React.FC = () => {
                   Cancel
                 </button>
                 <button onClick={() => {
-                  handleUpdateSale(selectedSale!); // Ensure not null when calling update
+                  handleUpdateSale(selectedSale!); 
                 }} className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
                   Save Changes
                 </button>

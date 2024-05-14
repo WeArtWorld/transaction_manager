@@ -14,7 +14,6 @@ interface Artist {
   category: string;
   item_sold: number;
   total_revenue: number;
-  // Assuming 'owed_amount' has been added to your data structure
   owed_amount: number;
 }
 
@@ -121,7 +120,7 @@ const ArtistPage: React.FC = () => {
         <>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
           <button onClick={() => handleEditClick(row.original)}>
-            <i className="fas fa-edit" style={{ color: 'blue', cursor: 'pointer' }}></i>
+            <i className="fas fa-edit pr-5" style={{ color: 'blue', cursor: 'pointer' }}></i>
           </button>
           <button onClick={() => handleDeleteClick(row.original)}>
             <i className="fas fa-trash" style={{ color: 'red', cursor: 'pointer' }}></i>
