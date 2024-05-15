@@ -22,6 +22,7 @@ const ArtistsPage: React.FC = () => {
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchArtists = async () => {
@@ -123,18 +124,15 @@ const ArtistsPage: React.FC = () => {
   ], []);
 
   return (
-    <div>
-      <button onClick={() => setAddArtistPopupOpen(true)}>Add Artist</button>
-      <AddArtistPopup
-        isOpen={isAddArtistPopupOpen}
-        onClose={() => setAddArtistPopupOpen(false)}
-        onAddArtist={handleAddArtist}
-      />
+    <div className="container mx-auto px-4 py-6">
       <DynamicTable
         columns={columns}
-        data={artists}
-        onSave={handleUpdateArtist}
+        data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onAdd={() => setAddArtistPopupOpen(true)}
       />
+      <AddArtistPopup isOpen={isAddArtistPopupOpen} onClose={() => setAddArtistPopupOpen(false)} onAddArtist={handleAddArtist} />
       {isDeleteModalOpen && (
         <Modal
           isOpen={isDeleteModalOpen}
