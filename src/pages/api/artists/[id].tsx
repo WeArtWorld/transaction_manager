@@ -34,8 +34,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       break;
 
+    case 'DELETE':
+      // Delete un artiste
+      try {
+        await fetch(`https://transactions-man-default-rtdb.firebaseio.com/Artists/${id}.json`, {
+          method: 'DELETE',
+        });
+        res.status(204).end(); 
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to delete artist' });
+      }
+      break;
+
     default:
-      res.setHeader('Allow', ['GET', 'PATCH']);
+      res.setHeader('Allow', ['GET', 'PATCH', 'DELETE']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
