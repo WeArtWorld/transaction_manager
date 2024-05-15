@@ -4,6 +4,7 @@ import AddSalePopup from '../components/addSalePopup';
 import { Column } from "react-table";
 import Modal from "react-modal";
 import { Dialog } from "@headlessui/react";
+//import axios from 'axios';
 
 Modal.setAppElement("#__next");
 
@@ -17,6 +18,18 @@ interface Sale {
   pick_up: boolean;
   price: string;
   volunteer_name: string;
+  artist_id: string;
+}
+
+interface SaleFormValues {
+  article: string;
+  comment: string;
+  payment_method: string;
+  pick_up: boolean;
+  price: string;
+  volunteer_name: string;
+  artist_id: string;
+  completed_payment: boolean;
 }
 
 const SalesPage: React.FC = () => {
@@ -42,6 +55,7 @@ const SalesPage: React.FC = () => {
           pick_up: item.pick_up,
           price: item.price,
           volunteer_name: item.volunteer_name,
+          artist_id: item.artist_id,
         }));
         setSales(loadedSales);
       } catch (error) {
@@ -99,6 +113,55 @@ const SalesPage: React.FC = () => {
       } catch (error) {
         console.error("Error deleting sale:", error);
       }
+    }
+  };
+
+  const handleAddSale = async (sale: SaleFormValues) => {
+    const postData = {
+      ...sale,
+      date: new Date().toISOString(), // Set current date and time
+    };
+
+    try {
+      // Fetch artist information
+      const artistResponse = await fetch(`https://transactions-man-default-rtdb.firebaseio.com/Artists/${sale.artist_id}.json`);
+      const artistData = await artistResponse.json();
+
+      // Increment the values
+      const updatedTotalRevenue = (artistData.total_revenue || 0) + parseFloat(sale.price);
+      const updatedOwedAmount = (artistData.owed_amount || 0) + parseFloat(sale.price);
+
+      // Update the database with the new values
+      await fetch(`https://transactions-man-default-rtdb.firebaseio.com/Artists/${sale.artist_id}.json`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          total_revenue: updatedTotalRevenue,
+          owed_amount: updatedOwedAmount,
+        })
+      });
+
+      // Add the sale
+      const response = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Sales.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to post new sale');
+      }
+
+      const data = await response.json();
+      const newSale = { ...postData, key: data.name };
+      setSales([...sales, newSale]);
+      setAddSalePopupOpen(false); // Close the modal
+    } catch (error) {
+      console.error('Error when adding sale:', error);
     }
   };
 
@@ -171,7 +234,7 @@ const SalesPage: React.FC = () => {
         data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_name.toLowerCase().includes(searchTerm.toLowerCase()))}
         onSave={handleUpdateSale}
       />
-      <AddSalePopup isOpen={isAddSalePopupOpen} onClose={() => setAddSalePopupOpen(false)} />
+      <AddSalePopup isOpen={isAddSalePopupOpen} onClose={() => setAddSalePopupOpen(false)} onAddSale={handleAddSale} />
       <Modal
         isOpen={isDeleteModalOpen}
         onRequestClose={() => setDeleteModalOpen(false)}

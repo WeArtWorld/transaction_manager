@@ -16,6 +16,7 @@ interface SaleFormValues {
 interface AddSalePopupProps {
   isOpen: boolean;
   onClose: () => void;
+  onAddSale: (sale: SaleFormValues) => void;
 }
 
 interface Artist {
@@ -27,8 +28,8 @@ interface Volunteer {
   name: string;
 }
 
-const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose }) => {
-  const { register, handleSubmit, reset, setValue } = useForm<SaleFormValues>();
+const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale }) => {
+  const { register, handleSubmit, reset } = useForm<SaleFormValues>();
   const [artists, setArtists] = useState<Artist[]>([]);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
 
@@ -57,26 +58,10 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose }) => {
   }, []);
 
   const onSubmit = async (data: SaleFormValues) => {
-    const postData = {
-      ...data,
-      date: new Date().toISOString(), // Set current date and time
-    };
-    
     try {
-      const response = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Sales.json', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData)
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to post new sale');
-      }
-      
-      reset();  // Reset form fields after successful posting
-      onClose();  // Close the modal
+      onAddSale(data);
+      reset(); // Reset form fields after successful posting
+      onClose(); // Close the modal
     } catch (error) {
       console.error('Error when adding sale:', error);
     }
