@@ -15,7 +15,7 @@ interface Sale {
   payment_method: string;
   pick_up: boolean;
   price: string;
-  volunteer_name: string;
+  volunteer_id: string;
   artist_id: string;
 }
 
@@ -26,6 +26,7 @@ const SalesPage: React.FC = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [volunteers, setVolunteers] = useState<{ [key: string]: any }>({});
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -37,7 +38,21 @@ const SalesPage: React.FC = () => {
       }
     };
 
+    const fetchVolunteers = async () => {
+      try {
+        const response = await axios.get('/api/volunteers');
+        const volunteerMap = response.data.reduce((acc: { [key: string]: string }, vol: { id: string, name: string }) => {
+          acc[vol.id] = vol.name;
+          return acc;
+        }, {});
+        setVolunteers(volunteerMap);
+      } catch (error) {
+        console.error('Error fetching volunteers:', error);
+      }
+    };
+
     fetchSales();
+    fetchVolunteers();
   }, []);
 
   const handleAddSale = async (sale: Omit<Sale, 'id' | 'date'>) => {
@@ -117,7 +132,8 @@ const SalesPage: React.FC = () => {
     },
     {
       Header: 'Volunteer Name',
-      accessor: 'volunteer_name',
+      accessor: 'volunteer_id',
+      Cell: ({ value }: any) => volunteers[value] || 'Unknown'
     },
     {
       Header: 'Actions',
@@ -133,13 +149,13 @@ const SalesPage: React.FC = () => {
         </>
       ),
     },
-  ], []);
+  ], [volunteers]);
 
   return (
     <div className="container mx-auto px-4 py-6">
       <DynamicTable
         columns={columns}
-        data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_name.toLowerCase().includes(searchTerm.toLowerCase()))}
+        data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_id.toLowerCase().includes(searchTerm.toLowerCase()))}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         onAdd={() => setAddSalePopupOpen(true)}
@@ -155,7 +171,7 @@ const SalesPage: React.FC = () => {
             <h2 className="text-lg font-bold">Confirm Delete</h2>
             {selectedSale && (
               <p>
-                Are you sure you want to delete the sale of {selectedSale.article} by {selectedSale.volunteer_name}?
+                Are you sure you want to delete the sale of {selectedSale.article} by {selectedSale.volunteer_id}?
               </p>
             )}
             <div>
