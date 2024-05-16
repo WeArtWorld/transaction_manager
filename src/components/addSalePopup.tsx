@@ -9,7 +9,7 @@ interface SaleFormValues {
   payment_method: string;
   pick_up: boolean;
   price: string;
-  volunteer_name: string;
+  volunteer_id: string;
   artist_id: string;
   completed_payment: boolean;
 }
@@ -72,15 +72,15 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
     <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-10 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen">
         <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow">
-          <Dialog.Title className="text-lg font-bold text-black">Add a Sale</Dialog.Title>
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-            <div className="space-y-4">
+          <Dialog.Title className="text-lg font-medium text-gray-900">Add Sale</Dialog.Title>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mt-4">
               <label className="block">
                 <span className="text-gray-700">Article:</span>
                 <input
                   type="text"
                   {...register('article', { required: true })}
-                  className="mt-1 block w-full text-black rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 />
               </label>
               <label className="block">
@@ -88,15 +88,7 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
                 <input
                   type="text"
                   {...register('comment')}
-                  className="mt-1 block w-full text-black rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                />
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Price:</span>
-                <input
-                  type="text"
-                  {...register('price', { required: true })}
-                  className="mt-1 block w-full text-black rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 />
               </label>
               <label className="block">
@@ -106,9 +98,17 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
                   className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 >
                   <option value="cash">Cash</option>
-                  <option value="debit">Debit</option>
-                  <option value="credit">Credit</option>
+                  <option value="card">Card</option>
+                  <option value="paypal">PayPal</option>
                 </select>
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Price:</span>
+                <input
+                  type="text"
+                  {...register('price', { required: true })}
+                  className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                />
               </label>
               <label className="block">
                 <span className="text-gray-700">Artist:</span>
@@ -126,11 +126,11 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
               <label className="block">
                 <span className="text-gray-700">Volunteer:</span>
                 <select
-                  {...register('volunteer_name', { required: true })}
+                  {...register('volunteer_id', { required: true })}
                   className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 >
                   {volunteers.map((volunteer) => (
-                    <option key={volunteer.id} value={volunteer.name}>
+                    <option key={volunteer.id} value={volunteer.id}>
                       {volunteer.name}
                     </option>
                   ))}
