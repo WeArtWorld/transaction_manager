@@ -3,17 +3,32 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 // Helper function to update an artist or volunteer
 async function updatePerson(type: 'Artists' | 'Volunteers', id: string, data: any) {
+  const url = `https://transactions-man-default-rtdb.firebaseio.com/${type}/${id}.json`;
   try {
-    const response = await fetch(`https://transactions-man-default-rtdb.firebaseio.com/${type}/${id}.json`, {
+    // Fetch current data
+    const currentDataResponse = await fetch(url);
+    const currentData = await currentDataResponse.json();
+
+    // Calculate new values
+    const newItemSold = (currentData.item_sold || 0) + 1;
+    const newOwedAmount = (currentData.owed_amount || 0) + (type === 'Volunteers' ? data.price * 0.10 : data.price * 0.45);
+    const newTotalRevenue = (currentData.total_revenue || 0) + data.price;
+
+    // Update data
+    const updateResponse = await fetch(url, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        item_sold: newItemSold,
+        owed_amount: newOwedAmount,
+        total_revenue: newTotalRevenue,
+      }),
     });
-    return await response.json();
+    return await updateResponse.json();
   } catch (error: unknown) {
-    // Using type assertion
+    // Error handling remains the same
     if (error instanceof Error) {
       console.error(`Failed to update ${type.slice(0, -1)}`, error.message);
     } else {
@@ -42,48 +57,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       break;
 
-    case 'POST':
-      // Create a sale and update volunteer and artist records
-      const { price, volunteer_id, artist_id } = req.body;
-      const volunteer_owed = parseFloat(price) * 0.10; // 10% pour les bénécole
-      const artist_owed = parseFloat(price) * 0.45;   //45% pour les artiste
-
-      try {
-        // Save the new sale
-        const newSale = req.body;
-        const saleResponse = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Sales.json', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newSale),
-        });
-        const saleData = await saleResponse.json();
-
-        // Update volunteer
-        console.log("Volunteers",volunteer_id);
-        await updatePerson('Volunteers', volunteer_id, {          
-          owed_amount: volunteer_owed,
-          item_sold: 1,  // Assuming initial value or fetch and update logic needed
-          total_revenue: parseFloat(price)
-        });
-
-        // Update artist
-        await updatePerson('Artists', artist_id, {
-          owed_amount: artist_owed,
-          item_sold: 1,  // Assuming initial value or fetch and update logic needed
-          total_revenue: parseFloat(price)
-        });
-
-        res.status(201).json({ id: saleData.name, ...newSale });
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          res.status(500).json({ error: 'Failed to create sale', details: error.message });
-        } else {
-          res.status(500).json({ error: 'Failed to create sale', details: 'An unknown error occurred' });
+      case 'POST':
+        const { price, volunteer_id, artist_id } = req.body;
+      
+        try {
+          // Save the new sale
+          const newSale = req.body;
+          const saleResponse = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Sales.json', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newSale),
+          });
+          const saleData = await saleResponse.json();
+      
+          // Update volunteer and artist
+          await updatePerson('Volunteers', volunteer_id, { price: parseFloat(price) });
+          await updatePerson('Artists', artist_id, { price: parseFloat(price) });
+      
+          res.status(201).json({ id: saleData.name, ...newSale });
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            res.status(500).json({ error: 'Failed to create sale', details: error.message });
+          } else {
+            res.status(500).json({ error: 'Failed to create sale', details: 'An unknown error occurred' });
+          }
         }
-      }
-      break;
+        break;
 
     default:
       res.setHeader('Allow', ['GET', 'POST']);
