@@ -1,21 +1,20 @@
 import React from 'react';
-import InfoCards from '../components/infoCards'
-import TopArtistsChart from '../components/barChart'
+import BarChartArtists from '../components/barChartArtists';
+import BarChartVolunteers from '../components/barChartVolunteers';
+import InfoCards from '../components/infoCards';
 
-const Home: React.FC = () => {
+const Dashboard = () => {
     return (
-        <>
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-            <main style={{ flexGrow: 1 }}>
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '1200px', marginBottom: '20px' }}>
                 <InfoCards />
-            </main>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', maxWidth: '1200px', gap: '30px' }}>
+                <BarChartArtists />
+                <BarChartVolunteers />
+            </div>
         </div>
-        <div>
-        <h1>Top Artists</h1>
-        <TopArtistsChart />
-      </div>
-      </>
     );
 };
 
-export default Home;
+export default Dashboard;
