@@ -152,7 +152,7 @@ const SalesPage: React.FC = () => {
   ], [volunteers]);
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container pt-20 mx-auto px-4 py-6">
       <DynamicTable
         columns={columns}
         data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_id.toLowerCase().includes(searchTerm.toLowerCase()))}

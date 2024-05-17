@@ -124,8 +124,9 @@ const ArtistsPage: React.FC = () => {
   ], []);
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto pt-20 px-4 py-6">
       <DynamicTable
+      
         columns={columns}
         data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
         searchTerm={searchTerm}
