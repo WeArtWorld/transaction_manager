@@ -237,3 +237,4 @@ const SalesPage: React.FC = () => {
 };
 
 export default SalesPage;
+
