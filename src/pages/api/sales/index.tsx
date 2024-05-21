@@ -10,9 +10,10 @@ async function updatePerson(type: 'Artists' | 'Volunteers', id: string, data: an
     const currentData = await currentDataResponse.json();
 
     // Calculate new values
-    const newItemSold = (currentData.item_sold || 0) + 1;
-    const newOwedAmount = (currentData.owed_amount || 0) + (type === 'Volunteers' ? data.price * 0.10 : data.price * 0.45);
-    const newTotalRevenue = (currentData.total_revenue || 0) + data.price;
+    const newItemSold = parseInt(currentData.item_sold || 0) + 1;
+    const newOwedAmount = parseFloat(currentData.owed_amount || 0) + (type === 'Volunteers' ? parseFloat(data.price) * 0.10 : parseFloat(data.price) * 0.55);
+    const newTotalRevenue = parseFloat(currentData.total_revenue || 0) + parseFloat(data.price);
+    
 
     // Update data
     const updateResponse = await fetch(url, {

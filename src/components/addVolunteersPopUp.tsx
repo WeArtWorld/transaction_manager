@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog } from '@headlessui/react';
+import { useForm } from 'react-hook-form';
 
 interface VolunteerFormValues {
   name: string;
@@ -13,42 +14,36 @@ interface AddVolunteerPopupProps {
 }
 
 const AddVolunteerPopup: React.FC<AddVolunteerPopupProps> = ({ isOpen, onClose, onAddVolunteer }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<VolunteerFormValues>();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAddVolunteer({ name, email });
-    setName('');
-    setEmail('');
+  const onSubmit = (data: VolunteerFormValues) => {
+    onAddVolunteer(data);
+    reset();
   };
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-10 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen">
-        <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow">
+        <Dialog.Panel className="w-full max-w-md bg-gray-100 p-6 rounded-lg shadow">
           <Dialog.Title className="text-lg font-bold text-black">Add a Volunteer</Dialog.Title>
-          <form onSubmit={handleSubmit} className="mt-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
             <div className="space-y-4">
               <label className="block">
                 <span className="text-gray-700">Name:</span>
                 <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  {...register('name', { required: 'Name is required' })}
                   className="mt-1 block w-full text-black rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                  required
                 />
+                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Email:</span>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register('email', { required: 'Email is required' })}
                   className="mt-1 block w-full text-black rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                  required
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
               </label>
             </div>
             <div className="mt-6 flex justify-end">

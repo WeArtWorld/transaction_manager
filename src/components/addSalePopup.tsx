@@ -31,7 +31,7 @@ interface Volunteer {
 }
 
 const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale }) => {
-  const { register, handleSubmit, reset } = useForm<SaleFormValues>();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<SaleFormValues>();
   const [artists, setArtists] = useState<Artist[]>([]);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
 
@@ -71,8 +71,8 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
   return (
     <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-10 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen">
-        <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow">
-          <Dialog.Title className="text-lg font-medium text-gray-900">Add Sale</Dialog.Title>
+        <Dialog.Panel className="w-full max-w-md p-6 bg-gray-100 rounded-lg shadow">
+          <Dialog.Title className="text-lg font-bold text-black">Add Sale</Dialog.Title>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mt-4">
               <label className="block">
@@ -82,6 +82,7 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
                   {...register('article', { required: true })}
                   className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 />
+                {errors.article && <p className="text-red-500 text-xs mt-1">{errors.article.message}</p>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Comment:</span>
@@ -101,19 +102,21 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
                   <option value="card">Card</option>
                   <option value="paypal">PayPal</option>
                 </select>
+                {errors.payment_method && <p className="text-red-500 text-xs mt-1">{errors.payment_method.message}</p>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Price:</span>
                 <input
-                  type="text"
-                  {...register('price', { required: true })}
+                  type="number"
+                  {...register('price', { required: 'Price is required', valueAsNumber: true })}
                   className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 />
+                {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price.message}</p>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Artist:</span>
                 <select
-                  {...register('artist_id', { required: true })}
+                  {...register('artist_id', { required: 'Artist is required' })}
                   className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 >
                   {artists.map((artist) => (
@@ -122,11 +125,12 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
                     </option>
                   ))}
                 </select>
+                {errors.artist_id && <p className="text-red-500 text-xs mt-1">{errors.artist_id.message}</p>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Volunteer:</span>
                 <select
-                  {...register('volunteer_id', { required: true })}
+                  {...register('volunteer_id', { required: 'Volunteer is required' })}
                   className="mt-1 block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 >
                   {volunteers.map((volunteer) => (
@@ -135,6 +139,7 @@ const AddSalePopup: React.FC<AddSalePopupProps> = ({ isOpen, onClose, onAddSale 
                     </option>
                   ))}
                 </select>
+                {errors.volunteer_id && <p className="text-red-500 text-xs mt-1">{errors.volunteer_id.message}</p>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Completed Payment:</span>
