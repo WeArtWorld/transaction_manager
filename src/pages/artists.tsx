@@ -167,6 +167,7 @@ const ArtistsPage: React.FC = () => {
         data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        addButtonText="Add an artist"
         onAdd={() => setAddArtistPopupOpen(true)}
       />
       <AddArtistPopup isOpen={isAddArtistPopupOpen} onClose={() => setAddArtistPopupOpen(false)} onAddArtist={handleAddArtist} />

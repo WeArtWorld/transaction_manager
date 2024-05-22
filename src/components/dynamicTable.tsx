@@ -5,11 +5,12 @@ interface DynamicTableProps<T extends object> {
   columns: Column<T>[];
   data: T[];
   searchTerm: string;
+  addButtonText: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   onAdd: () => void;
 }
 
-const DynamicTable = <T extends object>({ columns, data, searchTerm, setSearchTerm, onAdd }: DynamicTableProps<T>) => {
+const DynamicTable = <T extends object>({ columns, data, searchTerm, addButtonText, setSearchTerm, onAdd }: DynamicTableProps<T>) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable<T>({ columns, data });
 
   return (
@@ -18,7 +19,7 @@ const DynamicTable = <T extends object>({ columns, data, searchTerm, setSearchTe
         <div className="flex space-x-2">
           <input
             type="text"
-            placeholder="Search by article or volunteer name..."
+            placeholder="Search by name"
             className="text-black p-2 border border-gray-300 rounded"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -28,7 +29,7 @@ const DynamicTable = <T extends object>({ columns, data, searchTerm, setSearchTe
           </button>
         </div>
         <button onClick={onAdd} className="p-2 border border-gray-300 rounded text-black bg-green-500 hover:bg-green-600">
-          Add a Sale
+          {addButtonText}
         </button>
       </div>
       <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">

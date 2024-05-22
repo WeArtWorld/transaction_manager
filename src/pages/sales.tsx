@@ -158,6 +158,7 @@ const SalesPage: React.FC = () => {
         data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_id.toLowerCase().includes(searchTerm.toLowerCase()))}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        addButtonText="Add a Sale"
         onAdd={() => setAddSalePopupOpen(true)}
       />
       <AddSalePopup isOpen={isAddSalePopupOpen} onClose={() => setAddSalePopupOpen(false)} onAddSale={handleAddSale} />

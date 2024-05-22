@@ -161,6 +161,7 @@ const VolunteersPage: React.FC = () => {
         data={volunteers.filter(volunteer => volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()) || volunteer.email.toLowerCase().includes(searchTerm.toLowerCase()))}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        addButtonText="Add a volunteer"
         onAdd={() => setAddVolunteerPopupOpen(true)}
       />
       <AddVolunteerPopup isOpen={isAddVolunteerPopupOpen} onClose={() => setAddVolunteerPopupOpen(false)} onAddVolunteer={handleAddVolunteer} />
