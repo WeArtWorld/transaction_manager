@@ -9,17 +9,19 @@ interface HomeProps {
     signInWithEmail: (email: string, password: string) => Promise<any>;
     registerWithEmail: (email: string, password: string) => Promise<any>;
     signOut: () => void;
+    
 }
 
 const Home: React.FC<HomeProps> = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleRegister = () => {
         props.registerWithEmail(email, password)
             .then(() => {
-                router.push("/artists"); 
+                router.push("/artists");
             })
             .catch((error) => {
                 console.error("Error registering with email and password", error);
@@ -29,7 +31,7 @@ const Home: React.FC<HomeProps> = (props) => {
     const handleSignIn = () => {
         props.signInWithEmail(email, password)
             .then(() => {
-                router.push("/artists"); 
+                router.push("/artists");
             })
             .catch((error) => {
                 console.error("Error signing in with email and password", error);
@@ -42,54 +44,42 @@ const Home: React.FC<HomeProps> = (props) => {
                 className="max-h-80 hover:text-gray-100 hover:shadow-gray-100 p-10"
                 src="../logo.png"
             />
+            
             {props.user ? (
                 <>
-                    <span className="mb-4">
+                    <span className="mb-4 text-black">
                         Signed in as: {props.user.email}
                     </span>
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={props.signOut}
-                    >
-                        Sign Out
-                    </button>
                 </>
             ) : (
                 <>
-                    <div className="mb-4">
+                    <div className="mb-4 flex flex-col space-y-2 w-80">
                         <input
                             type="email"
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="mb-2 p-2 border border-gray-300 rounded"
+                            className="p-2 text-black border border-gray-300 rounded w-full"
                         />
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="p-2 border border-gray-300 rounded"
+                            className="p-2 text-black border border-gray-300 rounded w-full"
                         />
                     </div>
-                    <button
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
-                        onClick={handleRegister}
-                    >
-                        Register
+
+                    <button className="group relative h-12 w-48 overflow-hidden rounded-lg bg-white text-lg shadow" onClick={handleSignIn}>
+                        <div className="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>
+                        <span className="relative text-black group-hover:text-white">Sign In</span>
                     </button>
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                        onClick={handleSignIn}
-                    >
-                        Sign In
-                    </button>
-            {/*        <button
+                    {/*        <button
                         className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
                         onClick={props.signInWithGoogle}
                     >
                         Sign In with Google
-            </button>*/}
+                    </button>*/}
                 </>
             )}
         </div>

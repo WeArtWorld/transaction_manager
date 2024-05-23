@@ -2,6 +2,7 @@ import React from 'react';
 import BarChartArtists from '../components/barChartArtists';
 import BarChartVolunteers from '../components/barChartVolunteers';
 import InfoCards from '../components/infoCards';
+import withAuth from '../components/withAuth';
 
 const Dashboard = () => {
     return (
@@ -17,4 +18,5 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+//export default Dashboard;
+export default withAuth(Dashboard);

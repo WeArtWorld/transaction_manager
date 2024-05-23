@@ -4,13 +4,15 @@ import { MdOutlineVolunteerActivism } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
 import { FaUserAlt } from "react-icons/fa";
 import { IoDiamondOutline } from "react-icons/io5";
-import { User, getAuth } from "firebase/auth"; 
+import { IoSettings } from "react-icons/io5";
+import { MdLogout } from "react-icons/md";
+import { User, getAuth } from "firebase/auth";
 import { useRouter } from 'next/router';
 import 'firebase/auth';
 
 interface SidebarProps {
   children?: ReactNode;
-  user: User | null; 
+  user: User | null;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ children, user }) => {
@@ -27,7 +29,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children, user }) => {
     }
   };
 
-
   return (
     <div className='flex'>
       <div className='fixed w-30 h-screen p-4 bg-white border-r-[2px] flex flex-col justify-between'>
@@ -42,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, user }) => {
             <a className='bg-gray-100 hover:bg-gray-200 cursor-pointer my-4 p-3 rounded-lg inline-block'>
               <GrTransaction style={{ color: '#333' }} size={20} />
             </a>
-          </Link>   
+          </Link>
           <Link legacyBehavior href='/artists'>
             <a className='bg-gray-100 hover:bg-gray-200 cursor-pointer my-4 p-3 rounded-lg inline-block'>
               <FaUserAlt style={{ color: '#333' }} size={20} />
@@ -53,13 +54,23 @@ const Sidebar: React.FC<SidebarProps> = ({ children, user }) => {
               <MdOutlineVolunteerActivism style={{ color: '#333' }} size={20} />
             </a>
           </Link>
+        </div>
+
+        <div className='flex flex-col items-center'>
+
+          <Link legacyBehavior href='/settings'>
+            <a className='bg-gray-100 hover:bg-gray-200 cursor-pointer my-4 p-3 rounded-lg inline-block'>
+              <IoSettings style={{ color: '#333' }} size={20} />
+            </a>
+          </Link>
+
           <button
-            className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
+            className='bg-red-500 text-xs hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center'
             onClick={handleLogout}
           >
-            Logout
+            <MdLogout style={{ color: '#333' }} size={20} className='mr-2' />
+            
           </button>
-
         </div>
       </div>
       {children}

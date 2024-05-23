@@ -6,6 +6,7 @@ import { Column } from 'react-table';
 import Modal from 'react-modal';
 import { Dialog } from '@headlessui/react';
 import { useForm } from 'react-hook-form';
+import withAuth from '../components/withAuth';
 
 interface Artist {
   id: string;
@@ -321,4 +322,5 @@ const ArtistsPage: React.FC = () => {
   );
 };
 
-export default ArtistsPage;
+//export default ArtistsPage;
+export default withAuth(ArtistsPage);

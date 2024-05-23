@@ -5,6 +5,7 @@ import DynamicTable from '../components/dynamicTable';
 import { Column } from 'react-table';
 import Modal from 'react-modal';
 import { Dialog } from '@headlessui/react';
+import withAuth from '../components/withAuth';
 
 interface Sale {
   id: string;
@@ -237,5 +238,6 @@ const SalesPage: React.FC = () => {
   );
 };
 
-export default SalesPage;
+//export default SalesPage;
+export default withAuth(SalesPage);
 
