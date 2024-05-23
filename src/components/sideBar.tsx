@@ -4,12 +4,30 @@ import { MdOutlineVolunteerActivism } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
 import { FaUserAlt } from "react-icons/fa";
 import { IoDiamondOutline } from "react-icons/io5";
+import { User, getAuth } from "firebase/auth"; 
+import { useRouter } from 'next/router';
+import 'firebase/auth';
 
 interface SidebarProps {
   children?: ReactNode;
+  user: User | null; 
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+const Sidebar: React.FC<SidebarProps> = ({ children, user }) => {
+
+  const router = useRouter();
+  const auth = getAuth();
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push('/').then(() => router.reload());
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+
   return (
     <div className='flex'>
       <div className='fixed w-30 h-screen p-4 bg-white border-r-[2px] flex flex-col justify-between'>
@@ -35,9 +53,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               <MdOutlineVolunteerActivism style={{ color: '#333' }} size={20} />
             </a>
           </Link>
-          
-        </div>
-        <div>
+          <button
+            className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
 
         </div>
       </div>
