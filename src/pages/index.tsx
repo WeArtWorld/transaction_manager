@@ -9,32 +9,36 @@ interface HomeProps {
     signInWithEmail: (email: string, password: string) => Promise<any>;
     registerWithEmail: (email: string, password: string) => Promise<any>;
     signOut: () => void;
-    
 }
 
 const Home: React.FC<HomeProps> = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleRegister = () => {
+        setError(null); // Reset error before attempting registration
         props.registerWithEmail(email, password)
             .then(() => {
                 router.push("/artists");
             })
             .catch((error) => {
                 console.error("Error registering with email and password", error);
+                setError("Error registering with email and password. Please try again.");
             });
     };
 
     const handleSignIn = () => {
+        setError(null); // Reset error before attempting sign-in
         props.signInWithEmail(email, password)
             .then(() => {
                 router.push("/artists");
             })
             .catch((error) => {
                 console.error("Error signing in with email and password", error);
+                setError("Incorrect username or password. Please try again.");
             });
     };
 
@@ -54,6 +58,7 @@ const Home: React.FC<HomeProps> = (props) => {
             ) : (
                 <>
                     <div className="mb-4 flex flex-col space-y-2 w-80">
+                        {error && <p className="text-red-500 text-xs italic">{error}</p>}
                         <input
                             type="email"
                             placeholder="Email"

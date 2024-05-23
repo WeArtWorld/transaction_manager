@@ -12,6 +12,15 @@ interface SaleFormValues {
   volunteer_id: string;
   artist_id: string;
   completed_payment: boolean;
+  item: string;
+  amount: string;
+}
+
+interface Sale {
+  id: string;
+  item: string;
+  amount: string;
+  date: string;
 }
 
 interface AddSalePopupProps {
