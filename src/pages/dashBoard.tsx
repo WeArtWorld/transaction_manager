@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BarChartArtists from '../components/barChartArtists';
 import BarChartVolunteers from '../components/barChartVolunteers';
 import InfoCards from '../components/infoCards';
@@ -13,9 +13,42 @@ interface Sale {
     date: string;
 }
 
+interface Artist {
+    id: string;
+    name: string;
+    owed_amount: number;
+}
+
 const Dashboard = () => {
     const [isAddSalePopupOpen, setAddSalePopupOpen] = useState(false);
     const [sales, setSales] = useState<Sale[]>([]);
+    const [artists, setArtists] = useState<Artist[]>([]);
+
+    useEffect(() => {
+        const fetchSales = async () => {
+            try {
+                const response = await axios.get('/api/sales'); 
+                setSales(response.data);
+            } catch (error) {
+                console.error('Error fetching sales:', error);
+            }
+        };
+
+        const fetchArtists = async () => {
+            try {
+                const response = await axios.get('/api/artists'); 
+                setArtists(response.data);
+            } catch (error) {
+                console.error('Error fetching artists:', error);
+            }
+        };
+
+        fetchSales();
+        fetchArtists();
+    }, []);
+
+    const totalSales = sales.length;
+    const totalArtists = artists.length;
 
     const handleAddSale = async (sale: Omit<Sale, 'id' | 'date'>) => {
         const postData: Omit<Sale, 'id' | 'date'> & { date: string } = {
@@ -24,10 +57,10 @@ const Dashboard = () => {
         };
 
         try {
-            // Add the sale
             const response: AxiosResponse<{ id: string }> = await axios.post('/api/sales', postData);
             setSales([...sales, { ...postData, id: response.data.id }]);
             setAddSalePopupOpen(false); 
+            window.location.reload();
         } catch (error) {
             console.error('Error adding sale:', error);
         }
@@ -36,7 +69,7 @@ const Dashboard = () => {
     return (
         <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '1200px', marginBottom: '20px' }}>
-                <InfoCards />
+                <InfoCards totalArtists={totalArtists} totalSales={totalSales} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', maxWidth: '1200px', gap: '30px' }}>
                 <BarChartArtists />
