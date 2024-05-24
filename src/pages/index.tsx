@@ -19,7 +19,7 @@ const Home: React.FC<HomeProps> = (props) => {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleRegister = () => {
-        setError(null); // Reset error before attempting registration
+        setError(null); 
         props.registerWithEmail(email, password)
             .then(() => {
                 router.push("/artists");
@@ -31,7 +31,7 @@ const Home: React.FC<HomeProps> = (props) => {
     };
 
     const handleSignIn = () => {
-        setError(null); // Reset error before attempting sign-in
+        setError(null); 
         props.signInWithEmail(email, password)
             .then(() => {
                 router.push("/artists");
