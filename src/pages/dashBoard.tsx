@@ -42,14 +42,14 @@ const Dashboard = () => {
             const data: Sale[] = response.data;
             console.log('Sales data:', data);
 
-            // Filter the sales within the date range
+
             const filteredData = data.filter(sale => {
                 const saleDate = new Date(sale.date);
                 console.log(`Sale Date: ${saleDate}, Start Date: ${start}, End Date: ${end}`);
                 return saleDate >= start && saleDate <= end;
             });
 
-            // Process the data to find top sales and total amount
+
             const total = filteredData.reduce((acc, sale) => acc + parseFloat(sale.price || '0'), 0);
             const topSales = filteredData.sort((a, b) => parseFloat(b.price || '0') - parseFloat(a.price || '0')).slice(0, 5);
 

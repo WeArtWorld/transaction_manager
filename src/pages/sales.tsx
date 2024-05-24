@@ -28,6 +28,7 @@ const SalesPage: React.FC = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [volunteers, setVolunteers] = useState<{ [key: string]: any }>({});
+  const [sortOption, setSortOption] = useState<string>('highestPrice');
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -56,17 +57,31 @@ const SalesPage: React.FC = () => {
     fetchVolunteers();
   }, []);
 
+  useEffect(() => {
+    let sortedSales = [...sales];
+    if (sortOption === 'highestPrice') {
+      sortedSales.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (sortOption === 'lowestPrice') {
+      sortedSales.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (sortOption === 'mostRecent') {
+      sortedSales.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } else if (sortOption === 'oldestFirst') {
+      sortedSales.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    }
+    setSales(sortedSales);
+  }, [sortOption]);
+
   const handleAddSale = async (sale: Omit<Sale, 'id' | 'date'>) => {
     const postData = {
       ...sale,
-      date: new Date().toISOString(), // Set current date and time
+      date: new Date().toISOString(), 
     };
 
     try {
       // Add the sale
       const response = await axios.post('/api/sales', postData);
       setSales([...sales, { ...postData, id: response.data.id }]);
-      setAddSalePopupOpen(false); // Close the modal
+      setAddSalePopupOpen(false); 
     } catch (error) {
       console.error('Error adding sale:', error);
     }
@@ -154,6 +169,21 @@ const SalesPage: React.FC = () => {
 
   return (
     <div className="container pt-20 mx-auto px-4 py-6">
+      <div className="flex justify-between items-center mb-4">
+        
+        <div className="flex items-center text-black">
+          <select
+            className="p-2 border rounded mr-2"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="highestPrice">Highest to Lowest Price</option>
+            <option value="lowestPrice">Lowest to Highest Price</option>
+            <option value="mostRecent">Most Recent to Oldest</option>
+            <option value="oldestFirst">Oldest to Most Recent</option>
+          </select>
+        </div>
+      </div>
       <DynamicTable
         columns={columns}
         data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_id.toLowerCase().includes(searchTerm.toLowerCase()))}
@@ -238,6 +268,4 @@ const SalesPage: React.FC = () => {
   );
 };
 
-//export default SalesPage;
 export default withAuth(SalesPage);
-
