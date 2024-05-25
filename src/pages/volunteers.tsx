@@ -6,6 +6,7 @@ import { Column } from 'react-table';
 import Modal from 'react-modal';
 import { Dialog } from '@headlessui/react';
 import { useForm } from 'react-hook-form';
+import withAuth from '../components/withAuth';
 
 interface Volunteer {
   id: string;
@@ -286,4 +287,5 @@ const VolunteersPage: React.FC = () => {
   );
 };
 
-export default VolunteersPage;
+//export default VolunteersPage;
+export default withAuth(VolunteersPage);
