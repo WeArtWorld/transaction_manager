@@ -14,16 +14,23 @@ import {
 import { useEffect, useState } from "react";
 
 const firebaseConfig = {
-    apiKey: process.env.apiKey,
-    authDomain:  process.env.authDomain,
-    databaseURL: process.env.databaseURL,
-    projectId: process.env.projectId,
-    storageBucket: process.env.storageBucket,
-    messagingSenderId: process.env.messagingSenderId,
-    appId: process.env.appId
+    apiKey: "AIzaSyD_Goee3aXsWuQfhjCV39VbIrmTTpLm0Gc",
+    authDomain: "transactions-man.firebaseapp.com",
+    databaseURL: "https://transactions-man-default-rtdb.firebaseio.com",
+    projectId: "transactions-man",
+    storageBucket: "transactions-man.appspot.com",
+    messagingSenderId: "997311695247",
+    appId: "1:997311695247:web:098cfc7a82a23f6490e3fa"
+    /*apiKey: process.env.NEXT_PUBLIC_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+    databaseURL: process.env.NEXT_PUBLIC_DATABASE_URL,
+    projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_APP_ID*/
 };
 
-// Check if a Firebase app is already initialized
+
 const firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(firebaseApp);
 const googleProvider = new GoogleAuthProvider();
