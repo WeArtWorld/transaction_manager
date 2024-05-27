@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import 'firebase/auth';
 
 const withAuth = (WrappedComponent: React.ComponentType) => {
-  return (props: any) => {
+  const WithAuth = (props: any) => {
     const router = useRouter();
     const auth = getAuth();
 
@@ -20,6 +20,10 @@ const withAuth = (WrappedComponent: React.ComponentType) => {
 
     return <WrappedComponent {...props} />;
   };
+
+  WithAuth.displayName = `WithAuth(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+
+  return WithAuth;
 };
 
 export default withAuth;

@@ -35,10 +35,11 @@ const DynamicTable = <T extends object>({ columns, data, searchTerm, addButtonTe
       <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
+            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
               {headerGroup.headers.map(column => (
                 <th
                   {...column.getHeaderProps()}
+                  key={column.id}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   {column.render('Header')}
@@ -51,9 +52,9 @@ const DynamicTable = <T extends object>({ columns, data, searchTerm, addButtonTe
           {rows.map(row => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr {...row.getRowProps()} key={row.id}>
                 {row.cells.map(cell => (
-                  <td {...cell.getCellProps()} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td {...cell.getCellProps()} key={cell.column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {cell.render('Cell')}
                   </td>
                 ))}
