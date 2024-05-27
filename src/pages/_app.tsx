@@ -14,13 +14,13 @@ import {
 import { useEffect, useState } from "react";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD_Goee3aXsWuQfhjCV39VbIrmTTpLm0Gc",
-    authDomain: "transactions-man.firebaseapp.com",
-    databaseURL: "https://transactions-man-default-rtdb.firebaseio.com",
-    projectId: "transactions-man",
-    storageBucket: "transactions-man.appspot.com",
-    messagingSenderId: "997311695247",
-    appId: "1:997311695247:web:098cfc7a82a23f6490e3fa"
+    apiKey: process.env.apiKey,
+    authDomain:  process.env.authDomain,
+    databaseURL: process.env.databaseURL,
+    projectId: process.env.projectId,
+    storageBucket: process.env.storageBucket,
+    messagingSenderId: process.env.messagingSenderId,
+    appId: process.env.appId
 };
 
 // Check if a Firebase app is already initialized
