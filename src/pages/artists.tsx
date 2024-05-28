@@ -162,16 +162,16 @@ const ArtistsPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto pt-20 px-4 py-6">
-      <div className='ml-8 w-full p-4'>
-      <DynamicTable
-        columns={columns}
-        data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        addButtonText="Add an artist"
-        onAdd={() => setAddArtistPopupOpen(true)}
-      />
+    <div className="container mx-auto pt-20 px-4 py-6 ml-[120px]"> {/* Added margin-left to account for the sidebar */}
+      <div className='w-full p-4'>
+        <DynamicTable
+          columns={columns}
+          data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          addButtonText="Add an artist"
+          onAdd={() => setAddArtistPopupOpen(true)}
+        />
       </div>
       <AddArtistPopup isOpen={isAddArtistPopupOpen} onClose={() => setAddArtistPopupOpen(false)} onAddArtist={handleAddArtist} />
       {isDeleteModalOpen && (
