@@ -74,14 +74,14 @@ const SalesPage: React.FC = () => {
   const handleAddSale = async (sale: Omit<Sale, 'id' | 'date'>) => {
     const postData = {
       ...sale,
-      date: new Date().toISOString(), 
+      date: new Date().toISOString(),
     };
 
     try {
       // Add the sale
       const response = await axios.post('/api/sales', postData);
       setSales([...sales, { ...postData, id: response.data.id }]);
-      setAddSalePopupOpen(false); 
+      setAddSalePopupOpen(false);
     } catch (error) {
       console.error('Error adding sale:', error);
     }
@@ -155,7 +155,7 @@ const SalesPage: React.FC = () => {
       Header: 'Actions',
       Cell: ({ row }: any) => (
         <>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
           <button onClick={() => handleEditClick(row.original)}>
             <i className="fas fa-edit pr-5" style={{ color: 'blue', cursor: 'pointer' }}></i>
           </button>
@@ -170,7 +170,7 @@ const SalesPage: React.FC = () => {
   return (
     <div className="container pt-20 mx-auto px-4 py-6">
       <div className="flex justify-between items-center mb-4">
-        
+
         <div className="flex items-center text-black">
           <select
             className="p-2 border rounded mr-2"
@@ -184,14 +184,16 @@ const SalesPage: React.FC = () => {
           </select>
         </div>
       </div>
-      <DynamicTable
-        columns={columns}
-        data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_id.toLowerCase().includes(searchTerm.toLowerCase()))}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        addButtonText="Add a Sale"
-        onAdd={() => setAddSalePopupOpen(true)}
-      />
+      <div className='ml-8 w-full p-4'>
+        <DynamicTable
+          columns={columns}
+          data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_id.toLowerCase().includes(searchTerm.toLowerCase()))}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          addButtonText="Add a Sale"
+          onAdd={() => setAddSalePopupOpen(true)}
+        />
+      </div>
       <AddSalePopup isOpen={isAddSalePopupOpen} onClose={() => setAddSalePopupOpen(false)} onAddSale={handleAddSale} />
       {isDeleteModalOpen && (
         <Modal

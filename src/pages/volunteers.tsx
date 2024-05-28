@@ -157,14 +157,16 @@ const VolunteersPage: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-20 px-4 py-6">
-      <DynamicTable
-        columns={columns}
-        data={volunteers.filter(volunteer => volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()) || volunteer.email.toLowerCase().includes(searchTerm.toLowerCase()))}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        addButtonText="Add a volunteer"
-        onAdd={() => setAddVolunteerPopupOpen(true)}
-      />
+      <div className='ml-8 w-full p-4'>
+        <DynamicTable
+          columns={columns}
+          data={volunteers.filter(volunteer => volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()) || volunteer.email.toLowerCase().includes(searchTerm.toLowerCase()))}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          addButtonText="Add a volunteer"
+          onAdd={() => setAddVolunteerPopupOpen(true)}
+        />
+      </div>
       <AddVolunteerPopup isOpen={isAddVolunteerPopupOpen} onClose={() => setAddVolunteerPopupOpen(false)} onAddVolunteer={handleAddVolunteer} />
       {isDeleteModalOpen && selectedVolunteer && (
         <Modal
