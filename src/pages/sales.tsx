@@ -141,6 +141,7 @@ const SalesPage: React.FC = () => {
     {
       Header: 'Pick Up',
       accessor: 'pick_up',
+      Cell: ({ value }: any) => value ? 'Yes' : 'No'
     },
     {
       Header: 'Price',
@@ -168,23 +169,37 @@ const SalesPage: React.FC = () => {
   ], [volunteers]);
 
   return (
-    <div className="container pt-20 mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-4">
-
-        <div className="flex items-center text-black">
-          <select
-            className="p-2 border rounded mr-2"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-          >
-            <option value="highestPrice">Highest to Lowest Price</option>
-            <option value="lowestPrice">Lowest to Highest Price</option>
-            <option value="mostRecent">Most Recent to Oldest</option>
-            <option value="oldestFirst">Oldest to Most Recent</option>
-          </select>
+    <div className="flex flex-col items-center pt-20 px-4 py-6">
+      <div className='w-full max-w-4xl'>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center text-black">
+            <select
+              className="p-2 border rounded mr-2"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
+              <option value="highestPrice">Highest to Lowest Price</option>
+              <option value="lowestPrice">Lowest to Highest Price</option>
+              <option value="mostRecent">Most Recent to Oldest</option>
+              <option value="oldestFirst">Oldest to Most Recent</option>
+            </select>
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Search by name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="p-2 border rounded mr-2"
+            />
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={() => setAddSalePopupOpen(true)}
+            >
+              Add a Sale
+            </button>
+          </div>
         </div>
-      </div>
-      <div className='ml-8 w-full p-4'>
         <DynamicTable
           columns={columns}
           data={sales.filter(sale => sale.article.toLowerCase().includes(searchTerm.toLowerCase()) || sale.volunteer_id.toLowerCase().includes(searchTerm.toLowerCase()))}
@@ -194,6 +209,7 @@ const SalesPage: React.FC = () => {
           onAdd={() => setAddSalePopupOpen(true)}
         />
       </div>
+
       <AddSalePopup isOpen={isAddSalePopupOpen} onClose={() => setAddSalePopupOpen(false)} onAddSale={handleAddSale} />
       {isDeleteModalOpen && (
         <Modal

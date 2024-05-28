@@ -156,8 +156,8 @@ const VolunteersPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto pt-20 px-4 py-6">
-      <div className='ml-8 w-full p-4'>
+    <div className="flex flex-col items-center pt-20 px-4 py-6">
+      <div className='w-full max-w-4xl'>
         <DynamicTable
           columns={columns}
           data={volunteers.filter(volunteer => volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()) || volunteer.email.toLowerCase().includes(searchTerm.toLowerCase()))}

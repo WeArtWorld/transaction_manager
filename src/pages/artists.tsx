@@ -162,8 +162,8 @@ const ArtistsPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto pt-20 px-4 py-6 ml-[120px]"> {/* Added margin-left to account for the sidebar */}
-      <div className='w-full p-4'>
+    <div className="flex flex-col items-center pt-20 px-4 py-6"> 
+      <div className='w-fit max-w-4xl'>
         <DynamicTable
           columns={columns}
           data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
