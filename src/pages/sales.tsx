@@ -127,10 +127,6 @@ const SalesPage: React.FC = () => {
       accessor: 'article',
     },
     {
-      Header: 'Comment',
-      accessor: 'comment',
-    },
-    {
       Header: 'Date',
       accessor: 'date',
     },
@@ -170,7 +166,7 @@ const SalesPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center pt-20 px-4 py-6">
-      <div className='w-full max-w-4xl'>
+      <div className='w-full max-w-3xl'>
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center text-black">
             <select
@@ -184,21 +180,6 @@ const SalesPage: React.FC = () => {
               <option value="oldestFirst">Oldest to Most Recent</option>
             </select>
           </div>
-          <div>
-            <input
-              type="text"
-              placeholder="Search by name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="p-2 border rounded mr-2"
-            />
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={() => setAddSalePopupOpen(true)}
-            >
-              Add a Sale
-            </button>
-          </div>
         </div>
         <DynamicTable
           columns={columns}
@@ -209,7 +190,6 @@ const SalesPage: React.FC = () => {
           onAdd={() => setAddSalePopupOpen(true)}
         />
       </div>
-
       <AddSalePopup isOpen={isAddSalePopupOpen} onClose={() => setAddSalePopupOpen(false)} onAddSale={handleAddSale} />
       {isDeleteModalOpen && (
         <Modal

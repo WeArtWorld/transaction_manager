@@ -12,8 +12,8 @@ async function updatePerson(type: 'Artists' | 'Volunteers', id: string, data: an
     // Calculate new values
     const newItemSold = parseInt(currentData.item_sold || 0) + 1;
     const newOwedAmount = parseFloat(currentData.owed_amount || 0) + (type === 'Volunteers' ? parseFloat(data.price) * 0.10 : parseFloat(data.price) * 0.55);
+    const roundedOwedAmount = Math.round(newOwedAmount * 100) / 100;
     const newTotalRevenue = parseFloat(currentData.total_revenue || 0) + parseFloat(data.price);
-    
 
     // Update data
     const updateResponse = await fetch(url, {
@@ -23,7 +23,7 @@ async function updatePerson(type: 'Artists' | 'Volunteers', id: string, data: an
       },
       body: JSON.stringify({
         item_sold: newItemSold,
-        owed_amount: newOwedAmount,
+        owed_amount: roundedOwedAmount,
         total_revenue: newTotalRevenue,
       }),
     });
@@ -58,34 +58,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       break;
 
-      case 'POST':
-        const { price, volunteer_id, artist_id } = req.body;
-      
-        try {
-          // Save the new sale
-          const newSale = req.body;
-          const saleResponse = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Sales.json', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newSale),
-          });
-          const saleData = await saleResponse.json();
-      
-          // Update volunteer and artist
-          await updatePerson('Volunteers', volunteer_id, { price: parseFloat(price) });
-          await updatePerson('Artists', artist_id, { price: parseFloat(price) });
-      
-          res.status(201).json({ id: saleData.name, ...newSale });
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            res.status(500).json({ error: 'Failed to create sale', details: error.message });
-          } else {
-            res.status(500).json({ error: 'Failed to create sale', details: 'An unknown error occurred' });
-          }
+    case 'POST':
+      const { price, volunteer_id, artist_id } = req.body;
+
+      try {
+        // Save the new sale
+        const newSale = req.body;
+        const saleResponse = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Sales.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newSale),
+        });
+        const saleData = await saleResponse.json();
+
+        // Update volunteer and artist
+        await updatePerson('Volunteers', volunteer_id, { price: parseFloat(price) });
+        await updatePerson('Artists', artist_id, { price: parseFloat(price) });
+
+        res.status(201).json({ id: saleData.name, ...newSale });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          res.status(500).json({ error: 'Failed to create sale', details: error.message });
+        } else {
+          res.status(500).json({ error: 'Failed to create sale', details: 'An unknown error occurred' });
         }
-        break;
+      }
+      break;
 
     default:
       res.setHeader('Allow', ['GET', 'POST']);

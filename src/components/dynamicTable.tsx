@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTable, Column } from 'react-table';
+import Tooltip from '../components/toolTip';
 
 interface DynamicTableProps<T extends object> {
   columns: Column<T>[];
@@ -10,8 +11,20 @@ interface DynamicTableProps<T extends object> {
   onAdd: () => void;
 }
 
-const DynamicTable = <T extends object>({ columns, data, searchTerm, addButtonText, setSearchTerm, onAdd }: DynamicTableProps<T>) => {
+const DynamicTable = <T extends object>({
+  columns,
+  data,
+  searchTerm,
+  addButtonText,
+  setSearchTerm,
+  onAdd,
+}: DynamicTableProps<T>) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable<T>({ columns, data });
+
+  const formatDateTime = (value: string) => {
+    const date = new Date(value);
+    return `${date.getFullYear()} ${String(date.getMonth() + 1).padStart(2, '0')} ${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+  };
 
   return (
     <div>
@@ -53,11 +66,21 @@ const DynamicTable = <T extends object>({ columns, data, searchTerm, addButtonTe
             prepareRow(row);
             return (
               <tr {...row.getRowProps()} key={row.id}>
-                {row.cells.map(cell => (
-                  <td {...cell.getCellProps()} key={cell.column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {cell.render('Cell')}
-                  </td>
-                ))}
+                {row.cells.map(cell => {
+                  const cellContent = cell.column.id === 'date' ? formatDateTime(cell.value) : cell.render('Cell');
+                  const comment = (row.original as any).comment;
+                  return (
+                    <td {...cell.getCellProps()} key={cell.column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {comment ? (
+                        <Tooltip text={comment}>
+                          {cellContent}
+                        </Tooltip>
+                      ) : (
+                        cellContent
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}
