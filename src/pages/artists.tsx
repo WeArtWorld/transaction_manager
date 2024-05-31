@@ -21,7 +21,7 @@ interface Artist {
 interface ArtistFormValues {
   name: string;
   email: string;
-  categorie: string;  
+  categorie: string;
 }
 
 const ArtistsPage: React.FC = () => {
@@ -162,16 +162,16 @@ const ArtistsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center pt-20 px-4 py-6"> 
-      <div className='w-full max-w-3xl'>
-        <DynamicTable
-          columns={columns}
-          data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          addButtonText="Add an artist"
-          onAdd={() => setAddArtistPopupOpen(true)}
-        />
+    <div className="flex flex-col items-center pt-20 px-4 py-6">
+      <div className='w-full max-w-4xl'>
+          <DynamicTable
+            columns={columns}
+            data={artists.filter(artist => artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || artist.email.toLowerCase().includes(searchTerm.toLowerCase()))}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            addButtonText="Add an artist"
+            onAdd={() => setAddArtistPopupOpen(true)}
+          />
       </div>
       <AddArtistPopup isOpen={isAddArtistPopupOpen} onClose={() => setAddArtistPopupOpen(false)} onAddArtist={handleAddArtist} />
       {isDeleteModalOpen && (

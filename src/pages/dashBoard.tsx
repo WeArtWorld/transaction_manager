@@ -138,7 +138,7 @@ const Dashboard = () => {
                     Fetch Data
                 </button>
             </div>
-            <div className="w-full max-w-5xl text-black mb-5">
+            <div className="w-fit max-w-5xl text-black mb-5">
                 <h2 className="text-xl font-bold mb-3">Total Amount: ${totalAmount.toFixed(2)}</h2>
                 <h3 className="text-lg font-semibold mb-2">Top Sales</h3>
                 <ul className="list-disc list-inside">

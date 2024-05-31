@@ -196,24 +196,26 @@ const SalesPage: React.FC = () => {
           isOpen={isDeleteModalOpen}
           onRequestClose={() => setDeleteModalOpen(false)}
           contentLabel="Delete Confirmation"
+          className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto"
+          overlayClassName="fixed inset-0 bg-black bg-opacity-25"
         >
-          <div className="flex flex-col space-y-4">
-            <h2 className="text-lg font-bold">Confirm Delete</h2>
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 mx-auto">
+            <h2 className="text-lg font-bold text-black">Confirm Delete</h2>
             {selectedSale && (
-              <p>
-                Are you sure you want to delete the sale of {selectedSale.article} by {selectedSale.volunteer_id}?
+              <p className="text-black">
+                Are you sure you want to delete the sale {selectedSale.article}?
               </p>
             )}
-            <div>
+            <div className="mt-6 flex justify-end">
               <button
                 onClick={handleDelete}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2"
               >
                 Delete
               </button>
               <button
                 onClick={() => setDeleteModalOpen(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 ml-2"
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
               >
                 Cancel
               </button>

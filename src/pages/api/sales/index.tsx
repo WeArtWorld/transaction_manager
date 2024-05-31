@@ -5,17 +5,16 @@ import { NextApiRequest, NextApiResponse } from 'next';
 async function updatePerson(type: 'Artists' | 'Volunteers', id: string, data: any) {
   const url = `https://transactions-man-default-rtdb.firebaseio.com/${type}/${id}.json`;
   try {
-    // Fetch current data
+
     const currentDataResponse = await fetch(url);
     const currentData = await currentDataResponse.json();
 
-    // Calculate new values
     const newItemSold = parseInt(currentData.item_sold || 0) + 1;
     const newOwedAmount = parseFloat(currentData.owed_amount || 0) + (type === 'Volunteers' ? parseFloat(data.price) * 0.10 : parseFloat(data.price) * 0.55);
     const roundedOwedAmount = Math.round(newOwedAmount * 100) / 100;
     const newTotalRevenue = parseFloat(currentData.total_revenue || 0) + parseFloat(data.price);
 
-    // Update data
+
     const updateResponse = await fetch(url, {
       method: 'PATCH',
       headers: {
@@ -29,7 +28,7 @@ async function updatePerson(type: 'Artists' | 'Volunteers', id: string, data: an
     });
     return await updateResponse.json();
   } catch (error: unknown) {
-    // Error handling remains the same
+
     if (error instanceof Error) {
       console.error(`Failed to update ${type.slice(0, -1)}`, error.message);
     } else {
@@ -62,7 +61,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { price, volunteer_id, artist_id } = req.body;
 
       try {
-        // Save the new sale
         const newSale = req.body;
         const saleResponse = await fetch('https://transactions-man-default-rtdb.firebaseio.com/Sales.json', {
           method: 'POST',
@@ -73,7 +71,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
         const saleData = await saleResponse.json();
 
-        // Update volunteer and artist
         await updatePerson('Volunteers', volunteer_id, { price: parseFloat(price) });
         await updatePerson('Artists', artist_id, { price: parseFloat(price) });
 
